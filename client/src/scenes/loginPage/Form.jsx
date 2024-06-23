@@ -16,6 +16,7 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
+// Validation schemas
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -31,6 +32,16 @@ const loginSchema = yup.object().shape({
   password: yup.string().required("required"),
 });
 
+const forgotPasswordSchema = yup.object().shape({
+  email: yup.string().email("invalid email").required("required"),
+  newPassword: yup.string().required("required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("newPassword"), null], "Passwords must match")
+    .required("required"),
+});
+
+// Initial values
 const initialValuesRegister = {
   firstName: "",
   lastName: "",
@@ -46,6 +57,12 @@ const initialValuesLogin = {
   password: "",
 };
 
+const initialValuesForgotPassword = {
+  email: "",
+  newPassword: "",
+  confirmPassword: "",
+};
+
 const Form = () => {
   const [pageType, setPageType] = useState("login");
   const { palette } = useTheme();
@@ -54,9 +71,10 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
+  const isForgotPassword = pageType === "forgotPassword";
 
+  // Register user
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
@@ -78,6 +96,7 @@ const Form = () => {
     }
   };
 
+  // Login user
   const login = async (values, onSubmitProps) => {
     const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
       method: "POST",
@@ -97,16 +116,43 @@ const Form = () => {
     }
   };
 
+  // Handle forgot password
+  const forgotPassword = async (values, onSubmitProps) => {
+    const response = await fetch("http://localhost:3001/auth/forgotPassword", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    const result = await response.json();
+    onSubmitProps.resetForm();
+    if (result) {
+      setPageType("login");
+    }
+  };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
+    if (isForgotPassword) await forgotPassword(values, onSubmitProps);
   };
 
   return (
     <Formik
       onSubmit={handleFormSubmit}
-      initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
-      validationSchema={isLogin ? loginSchema : registerSchema}
+      initialValues={
+        isLogin
+          ? initialValuesLogin
+          : isRegister
+          ? initialValuesRegister
+          : initialValuesForgotPassword
+      }
+      validationSchema={
+        isLogin
+          ? loginSchema
+          : isRegister
+          ? registerSchema
+          : forgotPasswordSchema
+      }
     >
       {({
         values,
@@ -209,27 +255,73 @@ const Form = () => {
               </>
             )}
 
-            <TextField
-              label="Email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.email}
-              name="email"
-              error={Boolean(touched.email) && Boolean(errors.email)}
-              helperText={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.password}
-              name="password"
-              error={Boolean(touched.password) && Boolean(errors.password)}
-              helperText={touched.password && errors.password}
-              sx={{ gridColumn: "span 4" }}
-            />
+            {isForgotPassword && (
+              <>
+                <TextField
+                  label="Email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                  name="email"
+                  error={Boolean(touched.email) && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="New Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.newPassword}
+                  name="newPassword"
+                  error={
+                    Boolean(touched.newPassword) && Boolean(errors.newPassword)
+                  }
+                  helperText={touched.newPassword && errors.newPassword}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Confirm Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                  name="confirmPassword"
+                  error={
+                    Boolean(touched.confirmPassword) &&
+                    Boolean(errors.confirmPassword)
+                  }
+                  helperText={touched.confirmPassword && errors.confirmPassword}
+                  sx={{ gridColumn: "span 4" }}
+                />
+              </>
+            )}
+
+            {!isForgotPassword && (
+              <>
+                <TextField
+                  label="Email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                  name="email"
+                  error={Boolean(touched.email) && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  name="password"
+                  error={Boolean(touched.password) && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  sx={{ gridColumn: "span 4" }}
+                />
+              </>
+            )}
           </Box>
 
           {/* BUTTONS */}
@@ -245,7 +337,7 @@ const Form = () => {
                 "&:hover": { color: palette.primary.main },
               }}
             >
-              {isLogin ? "LOGIN" : "REGISTER"}
+              {isLogin ? "LOGIN" : isRegister ? "REGISTER" : "RESET PASSWORD"}
             </Button>
             <Typography
               onClick={() => {
@@ -263,8 +355,28 @@ const Form = () => {
             >
               {isLogin
                 ? "Don't have an account? Sign Up here."
-                : "Already have an account? Login here."}
+                : isRegister
+                ? "Already have an account? Login here."
+                : "Back to Login"}
             </Typography>
+            {isLogin && (
+              <Typography
+                onClick={() => {
+                  setPageType("forgotPassword");
+                  resetForm();
+                }}
+                sx={{
+                  textDecoration: "underline",
+                  color: palette.primary.main,
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: palette.primary.light,
+                  },
+                }}
+              >
+                Forgot Password?
+              </Typography>
+            )}
           </Box>
         </form>
       )}

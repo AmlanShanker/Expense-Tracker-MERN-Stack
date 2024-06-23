@@ -1,8 +1,6 @@
-// auth.js
-
 import express from "express";
 import { register, login } from "../controllers/auth.js";
-import { updateUser } from "../controllers/userController.js"; // Import updateUser from userController.js
+import { updateUser, forgotPassword } from "../controllers/userController.js"; // Import forgotPassword from userController.js
 
 const router = express.Router();
 
@@ -13,6 +11,9 @@ router.post("/register", register);
 router.post("/login", login);
 
 /* UPDATE USER */
-router.put("/updateUser/:id", updateUser); // Route for updating user information
+router.put("/users/:id", updateUser); // Route for updating user information
+
+/* FORGOT PASSWORD */
+router.post("/forgotPassword", forgotPassword); // Ensure the route matches the frontend URL
 
 export default router;
