@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as yup from "yup";
-import Navbar from "scenes/navBar"; // Import Navbar component
+import Navbar from "scenes/navBar";
 
 const expenseSchema = yup.object().shape({
   date: yup.date().required("Date is required"),
@@ -20,7 +20,7 @@ const initialValuesExpense = {
 };
 
 const AddExpense = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // eslint-disable-next-line
   const dispatch = useDispatch();
 
   const addExpense = async (values, onSubmitProps) => {
@@ -53,7 +53,14 @@ const AddExpense = () => {
       <Navbar /> {/* Render Navbar component */}
       <Box p="40px">
         {" "}
-        {/* Add padding around the form */}
+        <Typography
+          textAlign="center"
+          fontWeight="bold"
+          fontSize="32px"
+          color="primary"
+        >
+          Add Expense
+        </Typography>
         <Formik
           onSubmit={addExpense}
           initialValues={initialValuesExpense}
@@ -124,8 +131,8 @@ const AddExpense = () => {
                   />
                 </Box>
                 {/* Example of using Typography */}
-                <Typography variant="body2" color="textSecondary">
-                  Please fill out the form fields.
+                <Typography fontWeight="bold" fontSize="16px" color="primary">
+                  Please fill out the fields.
                 </Typography>
                 <Box mt="20px">
                   <Button type="submit" variant="contained">

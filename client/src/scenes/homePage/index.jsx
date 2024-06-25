@@ -8,6 +8,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -19,6 +20,7 @@ const HomePage = () => {
   const { _id, picturePath } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     // Fetch expenses from backend
@@ -30,6 +32,7 @@ const HomePage = () => {
         }
         const data = await response.json();
         setExpenses(data); // Assuming data is an array of expenses objects
+        calculateTotalAmount(data); // Calculate total amount after fetching expenses
       } catch (error) {
         console.error("Error fetching expenses:", error);
       }
@@ -37,6 +40,12 @@ const HomePage = () => {
 
     getExpenses();
   }, []); // Run only once on component mount
+
+  // Function to calculate total amount
+  const calculateTotalAmount = (expenses) => {
+    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    setTotalAmount(total);
+  };
 
   return (
     <Box>
@@ -52,10 +61,15 @@ const HomePage = () => {
           <UserWidget userId={_id} picturePath={picturePath} />
         </Box>
         <Box flexBasis={isNonMobileScreens ? "74%" : undefined}>
-          <Button variant="contained" onClick={() => navigate("/addexpense")}>
-            Add Expense
-          </Button>
           <Box marginTop="1rem">
+            <Typography
+              textAlign="center"
+              fontWeight="bold"
+              fontSize="32px"
+              color="primary"
+            >
+              Expense Table
+            </Typography>
             <Table>
               <TableHead>
                 <TableRow>
@@ -75,7 +89,29 @@ const HomePage = () => {
                   </TableRow>
                 ))}
               </TableBody>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={3} align="right">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Total Amount Spent:
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {totalAmount}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
             </Table>
+            <Box marginTop="1rem" textAlign="center">
+              <Button
+                variant="contained"
+                onClick={() => navigate("/addexpense")}
+              >
+                Add Expense
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
