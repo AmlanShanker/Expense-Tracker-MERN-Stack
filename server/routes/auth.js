@@ -21,6 +21,6 @@ router.post("/forgotPassword", forgotPassword); // Ensure the route matches the 
 router.post("/add", addExpense);
 
 /* GET EXPENSES */
-router.get("/", getExpenses);
+router.get("/get", getExpenses);
 
 export default router;
