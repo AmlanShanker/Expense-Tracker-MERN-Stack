@@ -8,7 +8,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  TableSortLabel,
   Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -21,6 +26,11 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [sortConfig, setSortConfig] = useState({
+    key: "date",
+    direction: "asc",
+  });
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   useEffect(() => {
     const getExpenses = async () => {
@@ -45,6 +55,48 @@ const HomePage = () => {
     setTotalAmount(total);
   };
 
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const handleMonthChange = (event) => {
+    const month = event.target.value;
+    setSelectedMonth(month);
+
+    const filteredExpenses = month
+      ? expenses.filter(
+          (expense) => new Date(expense.date).getMonth() === parseInt(month)
+        )
+      : expenses;
+
+    calculateTotalAmount(filteredExpenses);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toISOString().split("T")[0];
+  };
+
+  const filteredExpenses = selectedMonth
+    ? expenses.filter(
+        (expense) =>
+          new Date(expense.date).getMonth() === parseInt(selectedMonth)
+      )
+    : expenses;
+
+  const sortedExpenses = [...filteredExpenses].sort((a, b) => {
+    if (sortConfig.key === "date") {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+    } else {
+      return 0;
+    }
+  });
+
   return (
     <Box>
       <Navbar />
@@ -68,19 +120,50 @@ const HomePage = () => {
             >
               Expense Table
             </Typography>
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <InputLabel id="month-select-label">Month</InputLabel>
+              <Select
+                labelId="month-select-label"
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                label="Month"
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="0">January</MenuItem>
+                <MenuItem value="1">February</MenuItem>
+                <MenuItem value="2">March</MenuItem>
+                <MenuItem value="3">April</MenuItem>
+                <MenuItem value="4">May</MenuItem>
+                <MenuItem value="5">June</MenuItem>
+                <MenuItem value="6">July</MenuItem>
+                <MenuItem value="7">August</MenuItem>
+                <MenuItem value="8">September</MenuItem>
+                <MenuItem value="9">October</MenuItem>
+                <MenuItem value="10">November</MenuItem>
+                <MenuItem value="11">December</MenuItem>
+              </Select>
+            </FormControl>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Date</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortConfig.key === "date"}
+                      direction={sortConfig.direction}
+                      onClick={() => handleSort("date")}
+                    >
+                      Date
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Description</TableCell>
                   <TableCell>Amount</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {expenses.map((expense) => (
+                {sortedExpenses.map((expense) => (
                   <TableRow key={expense._id}>
-                    <TableCell>{expense.date}</TableCell>
+                    <TableCell>{formatDate(expense.date)}</TableCell>
                     <TableCell>{expense.name}</TableCell>
                     <TableCell>{expense.description}</TableCell>
                     <TableCell>{expense.amount}</TableCell>
