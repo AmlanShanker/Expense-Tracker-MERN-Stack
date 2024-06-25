@@ -53,7 +53,7 @@ const ProfilePage = () => {
     }
 
     await fetch(`http://localhost:3001/users/${userId}`, {
-      method: "PUT",
+      method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
