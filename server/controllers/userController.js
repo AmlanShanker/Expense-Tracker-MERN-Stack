@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
-import Account from "../models/Account.js"; // Ensure correct model import
+import Account from "../models/Account.js";
 
 /* UPDATE USER */
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params; // Get user ID from request parameters
+    const { id } = req.params;
     const {
       firstName,
       lastName,
@@ -15,11 +15,9 @@ export const updateUser = async (req, res) => {
       occupation,
     } = req.body;
 
-    // Find existing user by ID
     const user = await Account.findById(id);
     if (!user) return res.status(404).json({ msg: "User not found." });
 
-    // Update user fields
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;
@@ -34,7 +32,7 @@ export const updateUser = async (req, res) => {
     const updatedUser = await user.save();
     res.status(200).json(updatedUser);
   } catch (err) {
-    console.error(err); // Log the error to the console
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };

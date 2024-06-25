@@ -44,13 +44,12 @@ const AddExpense = () => {
       navigate("/home");
     } catch (error) {
       console.error("Error adding expense:", error);
-      // Handle error, e.g., show a message to the user
     }
   };
 
   return (
     <>
-      <Navbar /> {/* Render Navbar component */}
+      <Navbar />
       <Box p="40px">
         {" "}
         <Typography
@@ -130,7 +129,7 @@ const AddExpense = () => {
                     helperText={touched.amount && errors.amount}
                   />
                 </Box>
-                {/* Example of using Typography */}
+
                 <Typography fontWeight="bold" fontSize="16px" color="primary">
                   Please fill out the fields.
                 </Typography>

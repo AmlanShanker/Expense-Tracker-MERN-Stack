@@ -23,25 +23,23 @@ const HomePage = () => {
   const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
-    // Fetch expenses from backend
     const getExpenses = async () => {
       try {
-        const response = await fetch("http://localhost:3001/auth/get"); // Fetch expenses endpoint
+        const response = await fetch("http://localhost:3001/auth/get");
         if (!response.ok) {
           throw new Error("Failed to fetch expenses");
         }
         const data = await response.json();
-        setExpenses(data); // Assuming data is an array of expenses objects
-        calculateTotalAmount(data); // Calculate total amount after fetching expenses
+        setExpenses(data);
+        calculateTotalAmount(data);
       } catch (error) {
         console.error("Error fetching expenses:", error);
       }
     };
 
     getExpenses();
-  }, []); // Run only once on component mount
+  }, []);
 
-  // Function to calculate total amount
   const calculateTotalAmount = (expenses) => {
     const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     setTotalAmount(total);

@@ -1,6 +1,6 @@
 import express from "express";
 import { register, login } from "../controllers/auth.js";
-import { updateUser, forgotPassword } from "../controllers/userController.js"; // Import forgotPassword from userController.js
+import { updateUser, forgotPassword } from "../controllers/userController.js";
 import { addExpense, getExpenses } from "../controllers/expenseController.js";
 
 const router = express.Router();
@@ -12,10 +12,10 @@ router.post("/register", register);
 router.post("/login", login);
 
 /* UPDATE USER */
-router.post("/users/:id", updateUser); // Route for updating user information
+router.post("/users/:id", updateUser);
 
 /* FORGOT PASSWORD */
-router.post("/forgotPassword", forgotPassword); // Ensure the route matches the frontend URL
+router.post("/forgotPassword", forgotPassword);
 
 /* ADD EXPENSE */
 router.post("/add", addExpense);
