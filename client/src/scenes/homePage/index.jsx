@@ -192,6 +192,14 @@ const HomePage = () => {
               >
                 Add Expense
               </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate("/monthlyreport")}
+                style={{ marginLeft: "10px" }}
+              >
+                Monthly Report
+              </Button>
             </Box>
           </Box>
         </Box>
