@@ -16,7 +16,6 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
-// Validation schemas
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -41,7 +40,6 @@ const forgotPasswordSchema = yup.object().shape({
     .required("required"),
 });
 
-// Initial values
 const initialValuesRegister = {
   firstName: "",
   lastName: "",
@@ -73,7 +71,6 @@ const Form = () => {
   const isRegister = pageType === "register";
   const isForgotPassword = pageType === "forgotPassword";
 
-  // Register user
   const register = async (values, onSubmitProps) => {
     const formData = new FormData();
     for (let value in values) {
@@ -96,7 +93,6 @@ const Form = () => {
     }
   };
 
-  // Login user
   const login = async (values, onSubmitProps) => {
     const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
       method: "POST",
@@ -116,7 +112,6 @@ const Form = () => {
     }
   };
 
-  // Handle forgot password
   const forgotPassword = async (values, onSubmitProps) => {
     const response = await fetch("http://localhost:3001/auth/forgotPassword", {
       method: "POST",
@@ -324,7 +319,6 @@ const Form = () => {
             )}
           </Box>
 
-          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
