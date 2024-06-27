@@ -111,7 +111,7 @@ const HomePage = () => {
           <UserWidget userId={_id} picturePath={picturePath} />
         </Box>
         <Box flexBasis={isNonMobileScreens ? "74%" : undefined}>
-          <Box marginTop="1rem">
+          <Box>
             <Typography
               textAlign="center"
               fontWeight="bold"

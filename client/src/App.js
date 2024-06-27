@@ -32,7 +32,7 @@ function App() {
             <Route
               path="/addExpense"
               element={isAuth ? <AddExpense /> : <Navigate to="/" />}
-            />{" "}
+            />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
