@@ -28,7 +28,7 @@ const MonthlyReport = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
-  const [showBarChart, setShowBarChart] = useState(true); // State to toggle between Bar Chart and Pie Chart
+  const [showBarChart, setShowBarChart] = useState(true);
   const theme = useTheme();
   const COLORS = [
     theme.palette.primary.main,
@@ -180,7 +180,7 @@ const MonthlyReport = () => {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis />
+                  <YAxis type="number" />
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="amount" fill="#187795" />
