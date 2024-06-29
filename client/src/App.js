@@ -3,6 +3,7 @@ import HomePage from "scenes/homePage";
 import LoginPage from "scenes/loginPage";
 import ProfilePage from "scenes/profilePage";
 import AddExpense from "scenes/addExpense/AddExpense";
+import MonthlyReport from "scenes/monthlyReport/monthlyReport";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -32,6 +33,10 @@ function App() {
             <Route
               path="/addExpense"
               element={isAuth ? <AddExpense /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/monthlyReport"
+              element={isAuth ? <MonthlyReport /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>
