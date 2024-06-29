@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import {
   Box,
-  Button,
   Typography,
   Select,
   MenuItem,
@@ -9,8 +8,8 @@ import {
   InputLabel,
   useMediaQuery,
   useTheme,
+  Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -19,17 +18,17 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 import Navbar from "scenes/navBar";
+import { useNavigate } from "react-router-dom";
+import { PieChart, Pie, Cell } from "recharts";
 
 const MonthlyReport = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [showBarChart, setShowBarChart] = useState(true); // State to toggle between Bar Chart and Pie Chart
   const theme = useTheme();
   const COLORS = [
     theme.palette.primary.main,
@@ -76,9 +75,16 @@ const MonthlyReport = () => {
     return filteredExpenses.map((expense) => ({
       name: expense.name,
       amount: expense.amount,
-      value: expense.amount,
     }));
   }, [filteredExpenses]);
+
+  const handleShowBarChart = () => {
+    setShowBarChart(true);
+  };
+
+  const handleShowPieChart = () => {
+    setShowBarChart(false);
+  };
 
   return (
     <Box>
@@ -99,14 +105,6 @@ const MonthlyReport = () => {
           color="primary"
         >
           Monthly Report
-        </Typography>
-        <Typography
-          textAlign="center"
-          fontWeight="bold"
-          fontSize="24px"
-          color="primary"
-        >
-          Bar Graph
         </Typography>
         <FormControl fullWidth variant="outlined" margin="normal">
           <InputLabel id="month-select-label">Month</InputLabel>
@@ -131,49 +129,112 @@ const MonthlyReport = () => {
             <MenuItem value="11">December</MenuItem>
           </Select>
         </FormControl>
-        <BarChart
-          width={600}
-          height={400}
-          data={chartData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          mt="20px"
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="amount" fill="#187795" />
-        </BarChart>{" "}
-        <Typography
-          textAlign="center"
-          fontWeight="bold"
-          fontSize="24px"
-          color="primary"
-        >
-          Pie Chart
-        </Typography>
-        <PieChart width={600} height={400}>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            outerRadius={150}
-            fill={theme.palette.primary.main}
-            label
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleShowBarChart}
+            style={{ marginRight: "10px" }}
+            disabled={showBarChart}
           >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-        <Box display="flex" justifyContent="center" width="100%" mt="10px">
+            Show Bar Graph
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleShowPieChart}
+            disabled={!showBarChart}
+          >
+            Show Pie Chart
+          </Button>
+        </Box>
+        <Box display="flex" justifyContent="center" width="100%" mt="20px">
+          {showBarChart ? (
+            <Box style={{ width: isNonMobileScreens ? "80%" : "100%" }}>
+              <Typography
+                textAlign="center"
+                fontWeight="bold"
+                fontSize="20px"
+                color="primary"
+              >
+                Bar Graph
+              </Typography>
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <BarChart
+                  width={isNonMobileScreens ? 800 : 500}
+                  height={500}
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="amount" fill="#187795" />
+                </BarChart>
+              </Box>
+            </Box>
+          ) : (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width={isNonMobileScreens ? "50%" : "100%"}
+              style={{ height: "400px", position: "relative" }}
+            >
+              <Typography
+                textAlign="center"
+                fontWeight="bold"
+                fontSize="20px"
+                color="primary"
+                style={{ position: "absolute", top: 0, width: "100%" }}
+              >
+                Pie Chart
+              </Typography>
+              <PieChart width={400} height={400}>
+                <Pie
+                  data={chartData}
+                  dataKey="amount"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={150}
+                  fill={theme.palette.primary.main}
+                  label
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </Box>
+          )}
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          width="100%"
+          mt="20px"
+          gap="10px"
+        >
           <Button
             variant="contained"
             color="primary"
