@@ -57,6 +57,7 @@ const AddExpense = () => {
           fontWeight="bold"
           fontSize="32px"
           color="primary"
+          mb="30px"
         >
           Add Expense
         </Typography>

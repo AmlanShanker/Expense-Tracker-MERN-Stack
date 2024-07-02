@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Define the schema for the Account collection
 const AccountSchema = new mongoose.Schema(
   {
     firstName: {
@@ -42,6 +41,5 @@ const AccountSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Define and export the Account model
 const Account = mongoose.model("Account", AccountSchema);
 export default Account;
