@@ -15,7 +15,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined"; // Import the icon
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const updateUserSchema = yup.object().shape({
   firstName: yup.string().required("required"),

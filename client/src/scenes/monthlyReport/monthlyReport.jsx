@@ -67,16 +67,26 @@ const MonthlyReport = () => {
       : expenses;
   }, [selectedMonth, expenses]);
 
+  const aggregatedExpenses = useMemo(() => {
+    const aggregated = {};
+    filteredExpenses.forEach((expense) => {
+      const key = `${expense.name}-${new Date(expense.date).getMonth()}`;
+      if (!aggregated[key]) {
+        aggregated[key] = {
+          name: expense.name,
+          month: new Date(expense.date).getMonth(),
+          totalAmount: expense.amount,
+        };
+      } else {
+        aggregated[key].totalAmount += expense.amount;
+      }
+    });
+    return Object.values(aggregated);
+  }, [filteredExpenses]);
+
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
   };
-
-  const chartData = useMemo(() => {
-    return filteredExpenses.map((expense) => ({
-      name: expense.name,
-      amount: expense.amount,
-    }));
-  }, [filteredExpenses]);
 
   const handleShowBarChart = () => {
     setShowBarChart(true);
@@ -85,6 +95,15 @@ const MonthlyReport = () => {
   const handleShowPieChart = () => {
     setShowBarChart(false);
   };
+
+  const chartData = useMemo(() => {
+    return showBarChart
+      ? aggregatedExpenses.map((expense) => ({
+          name: expense.name,
+          amount: expense.totalAmount,
+        }))
+      : aggregatedExpenses;
+  }, [showBarChart, aggregatedExpenses]);
 
   return (
     <Box>
@@ -200,14 +219,14 @@ const MonthlyReport = () => {
                 fontWeight="bold"
                 fontSize="20px"
                 color="primary"
-                style={{ position: "absolute", top: 0, width: "100%" }}
+                style={{ position: "absolute", top: -20, width: "100%" }}
               >
                 Pie Chart
               </Typography>
               <PieChart width={400} height={400}>
                 <Pie
                   data={chartData}
-                  dataKey="amount"
+                  dataKey="totalAmount"
                   nameKey="name"
                   cx="50%"
                   cy="50%"
