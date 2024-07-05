@@ -5,6 +5,6 @@ They can also view their profile information and access their monthly expense re
 
 Backend functionality is implemented using Express.js and Node.js.
 
-Mongoose is used for storing data in the database.
+MongoDB is used for storing data in the database.
 
 The frontend is created using React.js.
