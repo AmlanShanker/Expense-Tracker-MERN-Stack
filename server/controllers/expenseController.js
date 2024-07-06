@@ -28,3 +28,19 @@ export const getExpenses = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Remove an expense
+export const removeExpense = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const deletedExpense = await Expense.findOneAndDelete({ name });
+
+    if (!deletedExpense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    res.status(200).json({ message: "Expense removed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

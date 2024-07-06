@@ -14,7 +14,9 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  IconButton,
 } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navBar";
@@ -30,7 +32,7 @@ const HomePage = () => {
     key: "date",
     direction: "asc",
   });
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("All");
 
   useEffect(() => {
     const getExpenses = async () => {
@@ -67,11 +69,12 @@ const HomePage = () => {
     const month = event.target.value;
     setSelectedMonth(month);
 
-    const filteredExpenses = month
-      ? expenses.filter(
-          (expense) => new Date(expense.date).getMonth() === parseInt(month)
-        )
-      : expenses;
+    const filteredExpenses =
+      month !== "All"
+        ? expenses.filter(
+            (expense) => new Date(expense.date).getMonth().toString() === month
+          )
+        : expenses;
 
     calculateTotalAmount(filteredExpenses);
   };
@@ -80,12 +83,13 @@ const HomePage = () => {
     return new Date(dateString).toISOString().split("T")[0];
   };
 
-  const filteredExpenses = selectedMonth
-    ? expenses.filter(
-        (expense) =>
-          new Date(expense.date).getMonth() === parseInt(selectedMonth)
-      )
-    : expenses;
+  const filteredExpenses =
+    selectedMonth !== "All"
+      ? expenses.filter(
+          (expense) =>
+            new Date(expense.date).getMonth().toString() === selectedMonth
+        )
+      : expenses;
 
   const sortedExpenses = [...filteredExpenses].sort((a, b) => {
     if (sortConfig.key === "date") {
@@ -96,6 +100,29 @@ const HomePage = () => {
       return 0;
     }
   });
+
+  const handleRemoveExpense = async (name) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/auth/remove/${name}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete expense");
+      }
+
+      const updatedExpenses = expenses.filter(
+        (expense) => expense.name !== name
+      );
+      setExpenses(updatedExpenses);
+      calculateTotalAmount(updatedExpenses);
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
 
   return (
     <Box>
@@ -121,14 +148,14 @@ const HomePage = () => {
               Expense Table
             </Typography>
             <FormControl fullWidth variant="outlined" margin="normal">
-              <InputLabel id="month-select-label">Month</InputLabel>
+              <InputLabel id="month-select-label">All</InputLabel>
               <Select
                 labelId="month-select-label"
                 value={selectedMonth}
                 onChange={handleMonthChange}
-                label="Month"
+                label="All"
               >
-                <MenuItem value="">All</MenuItem>
+                <MenuItem value="All">All</MenuItem>
                 <MenuItem value="0">January</MenuItem>
                 <MenuItem value="1">February</MenuItem>
                 <MenuItem value="2">March</MenuItem>
@@ -158,6 +185,7 @@ const HomePage = () => {
                   <TableCell>Name</TableCell>
                   <TableCell>Description</TableCell>
                   <TableCell>Amount</TableCell>
+                  <TableCell>Remove</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -167,12 +195,19 @@ const HomePage = () => {
                     <TableCell>{expense.name}</TableCell>
                     <TableCell>{expense.description}</TableCell>
                     <TableCell>{expense.amount}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={() => handleRemoveExpense(expense.name)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={3} align="right">
+                  <TableCell colSpan={4} align="right">
                     <Typography variant="subtitle1" fontWeight="bold">
                       Total Amount Spent:
                     </Typography>

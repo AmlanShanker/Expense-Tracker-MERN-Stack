@@ -83,14 +83,7 @@ const ProfilePage = () => {
               }}
               sx={{ gridColumn: "span 4" }}
             />
-            <TextField
-              label="Password"
-              value={user.password}
-              InputProps={{
-                readOnly: true,
-              }}
-              sx={{ gridColumn: "span 4" }}
-            />
+
             <TextField
               label="Location"
               value={user.location}

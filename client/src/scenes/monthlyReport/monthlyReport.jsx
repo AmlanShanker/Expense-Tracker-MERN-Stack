@@ -27,7 +27,7 @@ const MonthlyReport = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("All");
   const [showBarChart, setShowBarChart] = useState(true);
   const theme = useTheme();
   const COLORS = [
@@ -59,7 +59,7 @@ const MonthlyReport = () => {
   }, []);
 
   const filteredExpenses = useMemo(() => {
-    return selectedMonth
+    return selectedMonth !== "All"
       ? expenses.filter(
           (expense) =>
             new Date(expense.date).getMonth() === parseInt(selectedMonth)
@@ -133,7 +133,7 @@ const MonthlyReport = () => {
             onChange={handleMonthChange}
             label="Month"
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem value="All">All</MenuItem>
             <MenuItem value="0">January</MenuItem>
             <MenuItem value="1">February</MenuItem>
             <MenuItem value="2">March</MenuItem>

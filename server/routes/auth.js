@@ -1,7 +1,11 @@
 import express from "express";
 import { register, login } from "../controllers/auth.js";
 import { forgotPassword } from "../controllers/userController.js";
-import { addExpense, getExpenses } from "../controllers/expenseController.js";
+import {
+  addExpense,
+  getExpenses,
+  removeExpense,
+} from "../controllers/expenseController.js";
 
 const router = express.Router();
 
@@ -19,5 +23,8 @@ router.post("/add", addExpense);
 
 /* GET EXPENSES */
 router.get("/get", getExpenses);
+
+/* REMOVE EXPENSE */
+router.delete("/remove/:name", removeExpense);
 
 export default router;
